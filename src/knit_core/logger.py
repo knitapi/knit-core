@@ -5,7 +5,7 @@ from typing import Any, Dict, Optional
 from .mock_utils import context_snapshot_for_logging, get_mock_backing
 
 
-class SyncLogger:
+class FlowLogger:
     """Logger for step code. Locally, records are kept in memory (mock mode, read them with get_mock_logs) or printed to
     stdout. On Knit's runner the same calls go to Knit's run monitoring."""
 
@@ -31,12 +31,14 @@ class SyncLogger:
                     "vendor_name": vendor_name, "api_data": json.dumps(metadata or {}),
                     "context": json.dumps(context_snapshot_for_logging(context), default=str)})
 
-    def log_sync_event(self, sync_id: str, log_type: str, duration_ms: int, record_id: Optional[str] = None,
+    # The emitted record keeps the field names Knit's run monitoring already stores ("SYNC", "sync_id", "sync_data"); only the
+    # name of the call changed.
+    def log_flow_event(self, flow_id: str, log_type: str, duration_ms: int, record_id: Optional[str] = None,
                        external_id: Optional[str] = None, entity_type: Optional[str] = None, action: Optional[str] = None,
                        status: Optional[str] = None, error_message: Optional[str] = None, vendor_url: Optional[str] = None,
                        vendor_method: Optional[str] = None, vendor_req_id: Optional[str] = None,
                        metadata: Optional[Dict[str, Any]] = None, context: Optional[Dict[str, Any]] = None):
-        self._emit({"log_table": "SYNC", "sync_id": sync_id, "log_type": log_type, "duration_ms": int(duration_ms),
+        self._emit({"log_table": "SYNC", "sync_id": flow_id, "log_type": log_type, "duration_ms": int(duration_ms),
                     "record_id": record_id, "external_id": external_id, "entity_type": entity_type, "action": action,
                     "status": status, "error_message": error_message, "vendor_url": vendor_url,
                     "vendor_method": vendor_method, "vendor_request_id": vendor_req_id,
@@ -72,7 +74,7 @@ class SyncLogger:
         pass
 
 
-def get_logger(project_id=None, env=None, account_id=None, context: Optional[dict] = None) -> SyncLogger:
+def get_logger(project_id=None, env=None, account_id=None, context: Optional[dict] = None) -> FlowLogger:
     """A logger for step code. In mock mode records go to context and are read back with get_mock_logs(context)."""
     records = get_mock_backing(context, "logger_records", list) if context and context.get("mock_mode") else None
-    return SyncLogger(project_id, account_id, records)
+    return FlowLogger(project_id, account_id, records)

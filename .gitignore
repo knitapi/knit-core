@@ -1,6 +1,8 @@
-/.venv-build/*
-/.idea/*
+/.venv-build/
+/.idea/
 /dist/knit_core-0.1.0.tar.gz
 /dist/knit_core-0.1.0-py3-none-any.whl
-/src/knit_core.egg-info/*
+/src/knit_core.egg-info/
 /src/knit_core/py.typed
+/dist/
+/build/

@@ -13,15 +13,15 @@ def test_alias_gives_the_same_module_objects(tmp_path):
         install_alias("weavex_core", "knit_core")               # twice is fine
         import knit_core, weavex_core
         import weavex_core.durable, knit_core.durable
-        from weavex_core.state import get_sync_state
-        from knit_core.state import get_sync_state as g2
+        from weavex_core.state import get_state_store
+        from knit_core.state import get_state_store as g2
         assert weavex_core is knit_core
         assert weavex_core.durable is knit_core.durable
-        assert get_sync_state is g2
-        assert weavex_core.TerminalSyncError is knit_core.TerminalSyncError
+        assert get_state_store is g2
+        assert weavex_core.TerminalFlowError is knit_core.TerminalFlowError
         try:
-            raise weavex_core.TerminalSyncError("x")
-        except knit_core.SyncError:
+            raise weavex_core.TerminalFlowError("x")
+        except knit_core.FlowError:
             pass
         print("ok")
     """)

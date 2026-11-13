@@ -17,9 +17,9 @@ def rearm(context: dict, integration_id: str, key: str, fixture: Any) -> None:
 
 
 def run_step(step, context: dict, integration_ids: dict, step_context: Optional[dict] = None,
-             user_input: Optional[dict] = None, sync_id: str = "sync1", project_id: str = "proj1",
+             user_input: Optional[dict] = None, flow_id: str = "flow1", project_id: str = "proj1",
              account_id: str = "acct1"):
     """Run one async step the way the runner calls it. Returns (result, step_context)."""
     sc = {} if step_context is None else step_context
-    result = asyncio.run(step(user_input or {}, integration_ids, sync_id, project_id, account_id, context, sc))
+    result = asyncio.run(step(user_input or {}, integration_ids, flow_id, project_id, account_id, context, sc))
     return result, sc
